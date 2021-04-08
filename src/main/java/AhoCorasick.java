@@ -11,10 +11,7 @@ public class AhoCorasick {
         this.nodeByPath = new HashMap<>();
         this.root = Node.buildRoot();
         this.nodeByPath.put("", root);
-
-        this.dictionary = dictionary.stream()
-                                    .sorted(Comparator.comparingInt(String::length))
-                                    .collect(Collectors.toList());
+        this.dictionary = dictionary;
 
         this.buildTrie();
         this.buildFailureLinks();
