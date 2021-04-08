@@ -22,7 +22,20 @@ public class AhoCorasick {
     }
 
     private void buildDictionaryLinks() {
+        for(Map.Entry<String, Node> entry : nodeByPath.entrySet()) {
+            Node nodeUnderAnalysis = entry.getValue();
 
+            // Travels through the failure links until reach root or a word ending
+            // if finds root, than there's no dictionary link
+            // if some failure link points to a word ending node, than create dictionary link
+            Node reference = nodeUnderAnalysis.getFailureLink();
+            while (!reference.isWordEnding() && !reference.isRoot()) {
+                reference = reference.getFailureLink();
+            }
+
+            if (reference.isRoot()) continue;
+            nodeUnderAnalysis.setDictionaryLink(reference);
+        }
     }
 
     private void buildFailureLinks() {
@@ -31,27 +44,21 @@ public class AhoCorasick {
             String path = entry.getKey();
             Node nodeUnderAnalysis = entry.getValue();
             if (path.length() <= 1) {
-                nodeUnderAnalysis.addFailureLink(root);
+                nodeUnderAnalysis.setFailureLink(root);
                 continue;
             }
 
-            // Other nodes should use suffix logic
+            // For other nodes should use suffix logic
             String candidate = path;
             do {
+                // if the path exists, good! That's the one
+                // if it doesn't, than keep on reducing for getting smaller suffixes
+                // Eventually it's so reduced that it becomes root
                 candidate = candidate.substring(1);
             } while (candidate.length() > 0 && !nodeByPath.containsKey(candidate));
 
-            nodeUnderAnalysis.addFailureLink(nodeByPath.get(candidate));
+            nodeUnderAnalysis.setFailureLink(nodeByPath.get(candidate));
         }
-    }
-
-    private Node getNodeFor(String str) {
-        Node reference = this.root;
-        for (char letter : str.toCharArray()) {
-            reference = reference.getChildren(letter);
-        }
-
-        return reference;
     }
 
     private void buildTrie() {
@@ -64,7 +71,7 @@ public class AhoCorasick {
                 nodeByPath.put(path, reference);
             }
 
-            reference.markAsWordEnding(word);
+            reference.setEndingWord(word);
         }
     }
 
