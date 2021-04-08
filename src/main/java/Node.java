@@ -18,9 +18,7 @@ public class Node {
     }
 
     static Node buildRoot() {
-        Node root = new Node(ROOT_CONTENT);
-        root.failureLink = root;
-        return root;
+        return new Node(ROOT_CONTENT);
     }
 
     public Node tryGetOrAddChildren(char letter) {

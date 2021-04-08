@@ -26,6 +26,23 @@ public class AhoCorasick {
     }
 
     private void buildFailureLinks() {
+        for(Map.Entry<String, Node> entry : nodeByPath.entrySet()) {
+            // First level nodes have root as failure link
+            String path = entry.getKey();
+            Node nodeUnderAnalysis = entry.getValue();
+            if (path.length() <= 1) {
+                nodeUnderAnalysis.addFailureLink(root);
+                continue;
+            }
+
+            // Other nodes should use suffix logic
+            String candidate = path;
+            do {
+                candidate = candidate.substring(1);
+            } while (candidate.length() > 0 && !nodeByPath.containsKey(candidate));
+
+            nodeUnderAnalysis.addFailureLink(nodeByPath.get(candidate));
+        }
     }
 
     private Node getNodeFor(String str) {
