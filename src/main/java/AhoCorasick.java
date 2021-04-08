@@ -76,6 +76,37 @@ public class AhoCorasick {
     }
 
     public Map<String, Integer> getMatchesByWord(String sequence) {
-        return Collections.emptyMap();
+        if (sequence.isEmpty()) return Collections.emptyMap();
+
+        Map<String, Integer> result = new HashMap<>();
+        Node current = root;
+        for(char letter : sequence.toCharArray()) {
+            current = current.getChildren(letter) // Do we have a 'letter' child?
+                             .orElse(current.getFailureLink()); // If we don't, than use failureLink
+
+            // is it a word ending?
+            if (current.isWordEnding()) {
+                String word = current.getEndingWord();
+                result.put(word, result.containsKey(word) ? result.get(word) + 1 : 1);
+            }
+
+            // does it have any dictionary link?
+            for(String hit: getHitsByDictionaryLinks(current)) {
+                result.put(hit, result.containsKey(hit) ? result.get(hit) + 1 : 1);
+            }
+        }
+
+        return result;
+    }
+
+    private List<String> getHitsByDictionaryLinks(Node node) {
+        return node.getDictionaryLink()
+                   .map(linked -> {
+                       List<String> result = new ArrayList<>();
+                       result.add(linked.getEndingWord());
+                       result.addAll(getHitsByDictionaryLinks(linked));
+                       return result;
+                   })
+                   .orElse(Collections.emptyList());
     }
 }
