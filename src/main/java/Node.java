@@ -6,7 +6,7 @@ public class Node {
     private final Character letter;
     private Map<Character, Node> children;
     private Node failureLink;
-    private Node dictionaryLink;
+    private Optional<Node> dictionaryLink;
 
     // Metadata
     private String endingWord;
@@ -16,6 +16,7 @@ public class Node {
         this.children = new HashMap<>();
         this.failureLink = null;
         this.endingWord = "";
+        this.dictionaryLink = Optional.empty();
     }
 
     static Node buildRoot() {
@@ -23,13 +24,13 @@ public class Node {
     }
 
     public Node tryGetOrAddChildren(char letter) {
-        return Optional.ofNullable(getChildren(letter))
-                       .orElseGet(() -> addNode(letter));
+        return getChildren(letter).orElseGet(() -> addNode(letter));
     }
 
     public Node addNode(char letter) {
-        children.put(letter, new Node(letter));
-        return getChildren(letter);
+        Node result = new Node(letter);
+        children.put(letter, result);
+        return result;
     }
 
     public void setFailureLink(Node node) {
@@ -40,16 +41,16 @@ public class Node {
         return failureLink;
     }
 
-    public Node getDictionaryLink() {
+    public Optional<Node> getDictionaryLink() {
         return dictionaryLink;
     }
 
     public void setDictionaryLink(Node dictionaryLink) {
-        this.dictionaryLink = dictionaryLink;
+        this.dictionaryLink = Optional.ofNullable(dictionaryLink);
     }
 
-    public Node getChildren(char letter) {
-        return children.get(letter);
+    public Optional<Node> getChildren(char letter) {
+        return Optional.ofNullable(children.get(letter));
     }
 
     public void setEndingWord(String word) {
