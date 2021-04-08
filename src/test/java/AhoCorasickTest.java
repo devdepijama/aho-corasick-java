@@ -9,16 +9,25 @@ import static org.junit.jupiter.api.Assertions.*;
 class AhoCorasickTest {
     @Test
     public void testMatch() {
-        final AhoCorasick matcher = new AhoCorasick(Arrays.asList("pip", "par", "lel", "dido", "do", "pipedo"));
-        final Map<String, Integer> matches = matcher.getMatchesByWord("paralelepipedo");
+        final AhoCorasick matcher = new AhoCorasick(
+            Arrays.asList(
+                "an",
+                "deca",
+                "ant",
+                "cant",
+                "decant",
+                "plant"
+            )
+        );
+        final Map<String, Integer> matches = matcher.getMatchesByWord("decant");
 
         Assertions.assertEquals(5, matches.size());
 
-        wordAppearsNTimes(matches, "par", 1);
-        wordAppearsNTimes(matches, "lel", 1);
-        wordAppearsNTimes(matches, "pip", 1);
-        wordAppearsNTimes(matches, "do", 1);
-        wordAppearsNTimes(matches, "pipedo", 1);
+        wordAppearsNTimes(matches, "an", 1);
+        wordAppearsNTimes(matches, "ant", 1);
+        wordAppearsNTimes(matches, "cant", 1);
+        wordAppearsNTimes(matches, "deca", 1);
+        wordAppearsNTimes(matches, "decant", 1);
     }
 
     private void wordAppearsNTimes(Map<String, Integer> matches, String word, int times) {
